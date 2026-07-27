@@ -1,0 +1,18 @@
+{
+  "short_name": "Krishi Sanyog",
+  "name": "Krishi Sanyog - AI Smart Agriculture Platform",
+  "description": "AI-powered precision agriculture ecosystem providing soil health diagnostics, fertilizer calculation, crop suitability modeling, and government schemes.",
+  "icons": [
+    {
+      "src": "/icons.svg",
+      "type": "image/svg+xml",
+      "sizes": "512x512 192x192 128x128 96x96 48x48"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#000000",
+  "theme_color": "#10b981",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "categories": ["agriculture", "productivity", "utilities"]
+}
