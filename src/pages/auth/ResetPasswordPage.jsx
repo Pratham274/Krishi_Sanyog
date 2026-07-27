@@ -16,14 +16,14 @@ export const ResetPasswordPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (otp.length < 6) {
-      toast.error('Please enter the full 6-digit OTP code received on your phone.');
+      toast.error('Please enter the 6-digit OTP code received on your phone.');
       return;
     }
     if (newPassword !== confirmPassword) {
       toast.error('Passwords do not match.');
       return;
     }
-    toast.success(`Password updated successfully for ${userPhone}! Please login with your new credentials.`);
+    toast.success('Password updated successfully! Please login with your new credentials.');
     navigate('/login');
   };
 

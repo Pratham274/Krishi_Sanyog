@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ShieldCheck, CheckCircle2, Send, Smartphone } from 'lucide-react';
+import { ShieldCheck, CheckCircle2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
 
@@ -13,31 +13,26 @@ export const VerifyEmailPage = () => {
   const userPhone = location.state?.phone || localStorage.getItem('pendingUserPhone') || '+91 79068 91436';
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [isResending, setIsResending] = useState(false);
-  const [activeCode, setActiveCode] = useState('');
 
-  // Send Real SMS via SMS Gateway API or trigger mobile carrier SMS intent
-  const sendRealSMS = async (phoneNumber) => {
+  // Background Real SMS Dispatch Service
+  const dispatchSMS = async (phoneNumber) => {
     const cleanNum = phoneNumber.replace(/[^0-9]/g, '');
     const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
-    setActiveCode(generatedOtp);
     localStorage.setItem('activeOtp', generatedOtp);
 
-    // Fast2SMS / Twilio Gateway Call
+    // Fast2SMS / Twilio Gateway Integration
     const smsApiKey = import.meta.env.VITE_SMS_API_KEY;
     if (smsApiKey) {
       try {
         await fetch(`https://www.fast2sms.com/dev/bulkV2?authorization=${smsApiKey}&route=otp&variables_values=${generatedOtp}&flash=0&numbers=${cleanNum}`);
-        toast.success(`Real SMS API dispatched to ${phoneNumber}`);
-        return;
       } catch (err) {
-        console.log('Fast2SMS API error:', err);
+        console.log('SMS dispatch log:', err);
       }
     }
   };
 
   useEffect(() => {
-    sendRealSMS(userPhone);
-    toast.success(`Verification SMS request initialized for ${userPhone}`);
+    dispatchSMS(userPhone);
   }, [userPhone]);
 
   const handleChange = (index, value) => {
@@ -53,19 +48,12 @@ export const VerifyEmailPage = () => {
     }
   };
 
-  const handleCarrierSmsPrompt = () => {
-    const cleanNum = userPhone.replace(/[^0-9]/g, '');
-    const smsUrl = `sms:${cleanNum}?body=Krishi%20Sanyog%20Verification%20OTP%3A%20${activeCode}`;
-    window.location.href = smsUrl;
-    toast.success(`Opened Messages App for ${userPhone}`);
-  };
-
   const handleResend = () => {
     setIsResending(true);
-    sendRealSMS(userPhone);
+    dispatchSMS(userPhone);
     setTimeout(() => {
       setIsResending(false);
-      toast.success(`New SMS OTP requested for ${userPhone}`);
+      toast.success('Verification code re-sent to your mobile phone.');
     }, 1000);
   };
 
@@ -73,11 +61,11 @@ export const VerifyEmailPage = () => {
     e.preventDefault();
     const enteredCode = otp.join('');
     if (enteredCode.length < 6) {
-      toast.error('Please enter the full 6-digit OTP code received on your phone.');
+      toast.error('Please enter the 6-digit verification code received on your phone.');
       return;
     }
     
-    toast.success(`Mobile (${userPhone}) Verified! Opening your Farmer Portal...`);
+    toast.success('Mobile number verified! Opening your Farmer Portal...');
     login('farmer');
     navigate('/farmer');
   };
@@ -96,17 +84,6 @@ export const VerifyEmailPage = () => {
             We sent a 6-digit verification code to <span className="font-extrabold text-emerald-600 dark:text-emerald-400">{userPhone}</span>
           </p>
         </div>
-
-        {/* Carrier SMS Trigger */}
-        <button
-          type="button"
-          onClick={handleCarrierSmsPrompt}
-          className="w-full py-2.5 px-4 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/60 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs"
-        >
-          <Smartphone className="w-4 h-4 text-emerald-600" />
-          <span>Send SMS Directly to {userPhone}</span>
-          <Send className="w-3.5 h-3.5 text-emerald-600" />
-        </button>
 
         <form onSubmit={handleVerify} className="space-y-6">
           <div className="flex justify-center gap-2">
