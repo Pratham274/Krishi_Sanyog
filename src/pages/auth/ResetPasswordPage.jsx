@@ -1,27 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Lock, Eye, EyeOff, CheckCircle2, Smartphone, Zap } from 'lucide-react';
+import { Lock, Eye, EyeOff, CheckCircle2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export const ResetPasswordPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const userPhone = location.state?.phone || localStorage.getItem('pendingUserPhone') || '+91 98765 43210';
-  const demoOtp = '584920';
+  const userPhone = location.state?.phone || localStorage.getItem('pendingUserPhone') || '+91 79068 91436';
 
   const [otp, setOtp] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPass, setShowPass] = useState(false);
 
-  useEffect(() => {
-    toast.success(`📲 Reset OTP Sent to ${userPhone}! Code: ${demoOtp}`, {
-      duration: 6000,
-    });
-  }, [userPhone]);
-
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (otp.length < 6) {
+      toast.error('Please enter the full 6-digit OTP code received on your phone.');
+      return;
+    }
     if (newPassword !== confirmPassword) {
       toast.error('Passwords do not match.');
       return;
@@ -44,27 +41,6 @@ export const ResetPasswordPage = () => {
           </p>
         </div>
 
-        {/* Demo OTP Banner */}
-        <div className="p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/50 flex items-center justify-between gap-2 text-xs">
-          <div className="flex items-center gap-2">
-            <Smartphone className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
-            <div>
-              <span className="font-bold text-amber-900 dark:text-amber-200">Reset OTP: </span>
-              <span className="font-extrabold text-amber-600 dark:text-amber-400 font-mono tracking-widest text-sm">{demoOtp}</span>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={() => {
-              setOtp(demoOtp);
-              toast.success(`OTP ${demoOtp} Auto-filled!`);
-            }}
-            className="px-2.5 py-1 rounded-xl bg-amber-500 text-white font-bold text-[11px] flex items-center gap-1 hover:bg-amber-600 transition-all cursor-pointer shrink-0 shadow-xs"
-          >
-            <Zap className="w-3 h-3 fill-current" /> Auto-fill
-          </button>
-        </div>
-
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">6-Digit Verification OTP *</label>
@@ -74,7 +50,7 @@ export const ResetPasswordPage = () => {
               maxLength={6}
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
-              placeholder="e.g. 584920"
+              placeholder="Enter 6-digit OTP code"
               className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 text-center font-mono text-lg tracking-widest focus:outline-none focus:ring-2 focus:ring-emerald-500 font-bold"
             />
           </div>

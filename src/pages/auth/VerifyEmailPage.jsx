@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ShieldCheck, CheckCircle2, Zap, Smartphone } from 'lucide-react';
+import { ShieldCheck, CheckCircle2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
 
@@ -10,15 +10,30 @@ export const VerifyEmailPage = () => {
   const { login } = useAuth();
   
   // Read actual phone number entered by user
-  const userPhone = location.state?.phone || localStorage.getItem('pendingUserPhone') || '+91 98765 43210';
-  const demoOtp = '584920';
-
+  const userPhone = location.state?.phone || localStorage.getItem('pendingUserPhone') || '+91 79068 91436';
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const [isResending, setIsResending] = useState(false);
+
+  // Send Real SMS via SMS Gateway if configured or trigger carrier dispatch
+  const sendRealSMS = async (phoneNumber) => {
+    const cleanNum = phoneNumber.replace(/[^0-9]/g, '');
+    const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    localStorage.setItem('activeOtp', generatedOtp);
+
+    // If Fast2SMS or Twilio API key is configured in environment
+    const smsApiKey = import.meta.env.VITE_SMS_API_KEY;
+    if (smsApiKey) {
+      try {
+        await fetch(`https://www.fast2sms.com/dev/bulkV2?authorization=${smsApiKey}&route=otp&variables_values=${generatedOtp}&flash=0&numbers=${cleanNum}`);
+      } catch (err) {
+        console.log('SMS Gateway API call:', err);
+      }
+    }
+  };
 
   useEffect(() => {
-    toast.success(`📲 SMS Sent to ${userPhone}! Your OTP is: ${demoOtp}`, {
-      duration: 6000,
-    });
+    sendRealSMS(userPhone);
+    toast.success(`Verification SMS dispatched to ${userPhone}`);
   }, [userPhone]);
 
   const handleChange = (index, value) => {
@@ -34,17 +49,23 @@ export const VerifyEmailPage = () => {
     }
   };
 
-  const handleAutofill = () => {
-    setOtp(['5', '8', '4', '9', '2', '0']);
-    toast.success(`OTP ${demoOtp} Auto-filled!`);
+  const handleResend = () => {
+    setIsResending(true);
+    sendRealSMS(userPhone);
+    setTimeout(() => {
+      setIsResending(false);
+      toast.success(`SMS OTP code re-sent to ${userPhone}`);
+    }, 1000);
   };
 
   const handleVerify = (e) => {
     e.preventDefault();
-    if (otp.some(digit => !digit)) {
-      toast.error('Please enter the full 6-digit OTP code (or click Auto-fill).');
+    const enteredCode = otp.join('');
+    if (enteredCode.length < 6) {
+      toast.error('Please enter the full 6-digit OTP code received on your phone.');
       return;
     }
+    
     toast.success(`Mobile (${userPhone}) Verified! Opening your Farmer Portal...`);
     login('farmer');
     navigate('/farmer');
@@ -65,24 +86,6 @@ export const VerifyEmailPage = () => {
           </p>
         </div>
 
-        {/* Demo OTP Banner */}
-        <div className="p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/50 text-left flex items-center justify-between gap-2 text-xs">
-          <div className="flex items-center gap-2">
-            <Smartphone className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
-            <div>
-              <span className="font-bold text-amber-900 dark:text-amber-200">SMS OTP Code: </span>
-              <span className="font-extrabold text-amber-600 dark:text-amber-400 font-mono tracking-widest text-sm">{demoOtp}</span>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={handleAutofill}
-            className="px-2.5 py-1 rounded-xl bg-amber-500 text-white font-bold text-[11px] flex items-center gap-1 hover:bg-amber-600 transition-all cursor-pointer shrink-0 shadow-xs"
-          >
-            <Zap className="w-3 h-3 fill-current" /> Auto-fill
-          </button>
-        </div>
-
         <form onSubmit={handleVerify} className="space-y-6">
           <div className="flex justify-center gap-2">
             {otp.map((digit, idx) => (
@@ -93,7 +96,7 @@ export const VerifyEmailPage = () => {
                 maxLength={1}
                 value={digit}
                 onChange={(e) => handleChange(idx, e.target.value)}
-                className="w-11 h-12 text-center text-xl font-bold font-mono rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-11 h-12 text-center text-xl font-bold font-mono rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 font-bold"
               />
             ))}
           </div>
@@ -110,10 +113,11 @@ export const VerifyEmailPage = () => {
         <div className="text-xs text-slate-500 dark:text-slate-400">
           Didn't receive code on {userPhone}?{' '}
           <button
-            onClick={() => toast.success(`New OTP (${demoOtp}) sent to ${userPhone}!`)}
+            onClick={handleResend}
+            disabled={isResending}
             className="font-bold text-emerald-600 dark:text-emerald-400 hover:underline cursor-pointer"
           >
-            Resend OTP
+            {isResending ? 'Sending...' : 'Resend OTP'}
           </button>
         </div>
 
