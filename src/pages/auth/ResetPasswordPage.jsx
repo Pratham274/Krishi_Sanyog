@@ -1,17 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Lock, Eye, EyeOff, CheckCircle2 } from 'lucide-react';
+import { Lock, Eye, EyeOff, CheckCircle2, Smartphone, Zap } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export const ResetPasswordPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const userPhone = location.state?.phone || localStorage.getItem('pendingUserPhone') || '+91 98765 43210';
+  const demoOtp = '584920';
 
   const [otp, setOtp] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPass, setShowPass] = useState(false);
+
+  useEffect(() => {
+    toast.success(`📲 Reset OTP Sent to ${userPhone}! Code: ${demoOtp}`, {
+      duration: 6000,
+    });
+  }, [userPhone]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -35,6 +42,27 @@ export const ResetPasswordPage = () => {
           <p className="text-xs text-slate-500 dark:text-slate-400">
             Enter the 6-digit OTP sent to <span className="font-extrabold text-emerald-600 dark:text-emerald-400">{userPhone}</span> & setup a new password.
           </p>
+        </div>
+
+        {/* Demo OTP Banner */}
+        <div className="p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/50 flex items-center justify-between gap-2 text-xs">
+          <div className="flex items-center gap-2">
+            <Smartphone className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+            <div>
+              <span className="font-bold text-amber-900 dark:text-amber-200">Reset OTP: </span>
+              <span className="font-extrabold text-amber-600 dark:text-amber-400 font-mono tracking-widest text-sm">{demoOtp}</span>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setOtp(demoOtp);
+              toast.success(`OTP ${demoOtp} Auto-filled!`);
+            }}
+            className="px-2.5 py-1 rounded-xl bg-amber-500 text-white font-bold text-[11px] flex items-center gap-1 hover:bg-amber-600 transition-all cursor-pointer shrink-0 shadow-xs"
+          >
+            <Zap className="w-3 h-3 fill-current" /> Auto-fill
+          </button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">

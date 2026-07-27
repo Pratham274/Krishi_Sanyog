@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, CheckCircle2, Zap, Smartphone } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
 
@@ -11,8 +11,15 @@ export const VerifyEmailPage = () => {
   
   // Read actual phone number entered by user
   const userPhone = location.state?.phone || localStorage.getItem('pendingUserPhone') || '+91 98765 43210';
-  
+  const demoOtp = '584920';
+
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
+
+  useEffect(() => {
+    toast.success(`📲 SMS Sent to ${userPhone}! Your OTP is: ${demoOtp}`, {
+      duration: 6000,
+    });
+  }, [userPhone]);
 
   const handleChange = (index, value) => {
     if (value.length > 1) return;
@@ -27,10 +34,15 @@ export const VerifyEmailPage = () => {
     }
   };
 
+  const handleAutofill = () => {
+    setOtp(['5', '8', '4', '9', '2', '0']);
+    toast.success(`OTP ${demoOtp} Auto-filled!`);
+  };
+
   const handleVerify = (e) => {
     e.preventDefault();
     if (otp.some(digit => !digit)) {
-      toast.error('Please enter the full 6-digit OTP code.');
+      toast.error('Please enter the full 6-digit OTP code (or click Auto-fill).');
       return;
     }
     toast.success(`Mobile (${userPhone}) Verified! Opening your Farmer Portal...`);
@@ -51,6 +63,24 @@ export const VerifyEmailPage = () => {
           <p className="text-xs text-slate-500 dark:text-slate-400">
             We sent a 6-digit verification code to <span className="font-extrabold text-emerald-600 dark:text-emerald-400">{userPhone}</span>
           </p>
+        </div>
+
+        {/* Demo OTP Banner */}
+        <div className="p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/50 text-left flex items-center justify-between gap-2 text-xs">
+          <div className="flex items-center gap-2">
+            <Smartphone className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+            <div>
+              <span className="font-bold text-amber-900 dark:text-amber-200">SMS OTP Code: </span>
+              <span className="font-extrabold text-amber-600 dark:text-amber-400 font-mono tracking-widest text-sm">{demoOtp}</span>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={handleAutofill}
+            className="px-2.5 py-1 rounded-xl bg-amber-500 text-white font-bold text-[11px] flex items-center gap-1 hover:bg-amber-600 transition-all cursor-pointer shrink-0 shadow-xs"
+          >
+            <Zap className="w-3 h-3 fill-current" /> Auto-fill
+          </button>
         </div>
 
         <form onSubmit={handleVerify} className="space-y-6">
@@ -80,7 +110,7 @@ export const VerifyEmailPage = () => {
         <div className="text-xs text-slate-500 dark:text-slate-400">
           Didn't receive code on {userPhone}?{' '}
           <button
-            onClick={() => toast.success(`New OTP code sent to ${userPhone}!`)}
+            onClick={() => toast.success(`New OTP (${demoOtp}) sent to ${userPhone}!`)}
             className="font-bold text-emerald-600 dark:text-emerald-400 hover:underline cursor-pointer"
           >
             Resend OTP
