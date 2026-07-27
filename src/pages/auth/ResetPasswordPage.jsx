@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Lock, Eye, EyeOff, CheckCircle2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export const ResetPasswordPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const userPhone = location.state?.phone || localStorage.getItem('pendingUserPhone') || '+91 98765 43210';
+
   const [otp, setOtp] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -16,12 +19,12 @@ export const ResetPasswordPage = () => {
       toast.error('Passwords do not match.');
       return;
     }
-    toast.success('Password updated successfully! Please login with your new credentials.');
+    toast.success(`Password updated successfully for ${userPhone}! Please login with your new credentials.`);
     navigate('/login');
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#0B132B] flex items-center justify-center p-4 transition-colors">
+    <div className="min-h-screen bg-slate-50 dark:bg-black flex items-center justify-center p-4 transition-colors">
       <div className="w-full max-w-md glass-card p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl space-y-6">
         
         <div className="text-center space-y-2">
@@ -29,7 +32,9 @@ export const ResetPasswordPage = () => {
             <Lock className="w-6 h-6" />
           </div>
           <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">Reset Password</h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400">Enter the 6-digit OTP sent to your phone & setup a new password.</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400">
+            Enter the 6-digit OTP sent to <span className="font-extrabold text-emerald-600 dark:text-emerald-400">{userPhone}</span> & setup a new password.
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -42,7 +47,7 @@ export const ResetPasswordPage = () => {
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
               placeholder="e.g. 584920"
-              className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 text-center font-mono text-lg tracking-widest focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 text-center font-mono text-lg tracking-widest focus:outline-none focus:ring-2 focus:ring-emerald-500 font-bold"
             />
           </div>
 
@@ -55,7 +60,7 @@ export const ResetPasswordPage = () => {
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 placeholder="New password"
-                className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 pr-10"
+                className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 pr-10 font-bold"
               />
               <button
                 type="button"
@@ -75,7 +80,7 @@ export const ResetPasswordPage = () => {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder="Confirm new password"
-              className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 font-bold"
             />
           </div>
 

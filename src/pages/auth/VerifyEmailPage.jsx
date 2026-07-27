@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ShieldCheck, CheckCircle2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
 
 export const VerifyEmailPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useAuth();
+  
+  // Read actual phone number entered by user
+  const userPhone = location.state?.phone || localStorage.getItem('pendingUserPhone') || '+91 98765 43210';
+  
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
 
   const handleChange = (index, value) => {
@@ -28,13 +33,13 @@ export const VerifyEmailPage = () => {
       toast.error('Please enter the full 6-digit OTP code.');
       return;
     }
-    toast.success('Mobile & Soil ID Verified! Opening your Farmer Portal...');
+    toast.success(`Mobile (${userPhone}) Verified! Opening your Farmer Portal...`);
     login('farmer');
     navigate('/farmer');
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#0B132B] flex items-center justify-center p-4 transition-colors">
+    <div className="min-h-screen bg-slate-50 dark:bg-black flex items-center justify-center p-4 transition-colors">
       <div className="w-full max-w-md glass-card p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl space-y-6 text-center">
         
         <div className="w-14 h-14 rounded-2xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto shadow-md">
@@ -44,7 +49,7 @@ export const VerifyEmailPage = () => {
         <div className="space-y-2">
           <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">Verify Mobile Number</h2>
           <p className="text-xs text-slate-500 dark:text-slate-400">
-            We sent a 6-digit verification code to <span className="font-bold text-slate-800 dark:text-slate-200">+91 98765 43210</span>
+            We sent a 6-digit verification code to <span className="font-extrabold text-emerald-600 dark:text-emerald-400">{userPhone}</span>
           </p>
         </div>
 
@@ -73,10 +78,10 @@ export const VerifyEmailPage = () => {
         </form>
 
         <div className="text-xs text-slate-500 dark:text-slate-400">
-          Didn't receive code?{' '}
+          Didn't receive code on {userPhone}?{' '}
           <button
-            onClick={() => toast.success('New OTP sent!')}
-            className="font-bold text-emerald-600 dark:text-emerald-400 hover:underline"
+            onClick={() => toast.success(`New OTP code sent to ${userPhone}!`)}
+            className="font-bold text-emerald-600 dark:text-emerald-400 hover:underline cursor-pointer"
           >
             Resend OTP
           </button>

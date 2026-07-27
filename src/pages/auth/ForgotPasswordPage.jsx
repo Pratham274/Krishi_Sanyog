@@ -10,15 +10,17 @@ export const ForgotPasswordPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!emailOrPhone) {
-      toast.error('Please enter your email or phone.');
+      toast.error('Please enter your email or phone number.');
       return;
     }
-    toast.success('Reset link & OTP sent to your registered mobile/email.');
-    navigate('/reset-password');
+    const cleanValue = emailOrPhone.trim();
+    localStorage.setItem('pendingUserPhone', cleanValue);
+    toast.success(`Reset OTP sent to ${cleanValue}`);
+    navigate('/reset-password', { state: { phone: cleanValue } });
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#0B132B] flex items-center justify-center p-4 transition-colors">
+    <div className="min-h-screen bg-slate-50 dark:bg-black flex items-center justify-center p-4 transition-colors">
       <div className="w-full max-w-md glass-card p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl space-y-6">
         
         <Link to="/login" className="inline-flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-emerald-600">
@@ -30,19 +32,19 @@ export const ForgotPasswordPage = () => {
             <Mail className="w-6 h-6" />
           </div>
           <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">Forgot Password?</h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400">Enter your mobile number or registered email to receive a password reset verification code.</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400">Enter your registered mobile phone number or email to receive a password reset verification code.</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Registered Mobile or Email</label>
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Registered Mobile Number or Email</label>
             <input
               type="text"
               required
               value={emailOrPhone}
               onChange={(e) => setEmailOrPhone(e.target.value)}
               placeholder="e.g. +91 98765 43210 or name@example.com"
-              className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 font-bold"
             />
           </div>
 

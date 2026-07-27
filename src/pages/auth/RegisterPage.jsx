@@ -23,12 +23,14 @@ export const RegisterPage = () => {
       toast.error('Please complete all mandatory fields.');
       return;
     }
-    toast.success('Registration successful! Verification code sent to your phone.');
-    navigate('/verify-email');
+    const cleanPhone = formData.phone.trim();
+    localStorage.setItem('pendingUserPhone', cleanPhone);
+    toast.success(`OTP Verification code sent to ${cleanPhone}`);
+    navigate('/verify-email', { state: { phone: cleanPhone } });
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#0B132B] flex items-center justify-center p-4 transition-colors py-12">
+    <div className="min-h-screen bg-slate-50 dark:bg-black flex items-center justify-center p-4 transition-colors py-12">
       <div className="w-full max-w-2xl glass-card p-8 sm:p-10 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl space-y-6">
         
         {/* Logo & Title */}
@@ -54,18 +56,18 @@ export const RegisterPage = () => {
                 value={formData.fullName}
                 onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                 placeholder="e.g. Ramesh Patel"
-                className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 font-bold"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Mobile Number *</label>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Mobile Phone Number *</label>
               <input
                 type="tel"
                 required
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                placeholder="+91 98765 43210"
-                className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                placeholder="Enter your phone number (e.g. +91 9876543210)"
+                className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 font-bold"
               />
             </div>
           </div>
@@ -76,7 +78,7 @@ export const RegisterPage = () => {
               <select
                 value={formData.state}
                 onChange={(e) => setFormData({ ...formData, state: e.target.value })}
-                className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 font-bold"
               >
                 <option value="Madhya Pradesh">Madhya Pradesh</option>
                 <option value="Uttar Pradesh">Uttar Pradesh</option>
@@ -93,7 +95,7 @@ export const RegisterPage = () => {
                 value={formData.district}
                 onChange={(e) => setFormData({ ...formData, district: e.target.value })}
                 placeholder="e.g. Indore"
-                className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 font-bold"
               />
             </div>
           </div>
@@ -107,7 +109,7 @@ export const RegisterPage = () => {
                 value={formData.landSize}
                 onChange={(e) => setFormData({ ...formData, landSize: e.target.value })}
                 placeholder="e.g. 4.5"
-                className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 font-bold"
               />
             </div>
             <div>
@@ -115,7 +117,7 @@ export const RegisterPage = () => {
               <select
                 value={formData.soilType}
                 onChange={(e) => setFormData({ ...formData, soilType: e.target.value })}
-                className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 font-bold"
               >
                 <option value="Black Cotton Soil">Black Cotton Soil (काली मिट्टी)</option>
                 <option value="Alluvial Soil">Alluvial Soil (जलोढ़ मिट्टी)</option>
@@ -135,7 +137,7 @@ export const RegisterPage = () => {
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 placeholder="At least 6 characters"
-                className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 pr-10"
+                className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 pr-10 font-bold"
               />
               <button
                 type="button"
@@ -151,7 +153,7 @@ export const RegisterPage = () => {
             type="submit"
             className="w-full py-4 rounded-2xl emerald-gradient-btn font-bold text-sm flex items-center justify-center gap-2 cursor-pointer shadow-lg"
           >
-            <span>Register & Proceed to Verification</span>
+            <span>Register & Send OTP Verification</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </form>
