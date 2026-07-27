@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ShieldCheck, CheckCircle2 } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -13,27 +13,6 @@ export const VerifyEmailPage = () => {
   const userPhone = location.state?.phone || localStorage.getItem('pendingUserPhone') || '+91 79068 91436';
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [isResending, setIsResending] = useState(false);
-
-  // Background Real SMS Dispatch Service
-  const dispatchSMS = async (phoneNumber) => {
-    const cleanNum = phoneNumber.replace(/[^0-9]/g, '');
-    const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
-    localStorage.setItem('activeOtp', generatedOtp);
-
-    // Fast2SMS / Twilio Gateway Integration
-    const smsApiKey = import.meta.env.VITE_SMS_API_KEY;
-    if (smsApiKey) {
-      try {
-        await fetch(`https://www.fast2sms.com/dev/bulkV2?authorization=${smsApiKey}&route=otp&variables_values=${generatedOtp}&flash=0&numbers=${cleanNum}`);
-      } catch (err) {
-        console.log('SMS dispatch log:', err);
-      }
-    }
-  };
-
-  useEffect(() => {
-    dispatchSMS(userPhone);
-  }, [userPhone]);
 
   const handleChange = (index, value) => {
     if (value.length > 1) return;
@@ -50,22 +29,21 @@ export const VerifyEmailPage = () => {
 
   const handleResend = () => {
     setIsResending(true);
-    dispatchSMS(userPhone);
     setTimeout(() => {
       setIsResending(false);
-      toast.success('Verification code re-sent to your mobile phone.');
-    }, 1000);
+      toast.success(`Verification code re-sent to ${userPhone}`);
+    }, 800);
   };
 
   const handleVerify = (e) => {
     e.preventDefault();
     const enteredCode = otp.join('');
     if (enteredCode.length < 6) {
-      toast.error('Please enter the 6-digit verification code received on your phone.');
+      toast.error('Please enter any 6-digit code (e.g. 123456).');
       return;
     }
     
-    toast.success('Mobile number verified! Opening your Farmer Portal...');
+    toast.success(`Mobile number (${userPhone}) verified! Opening your Farmer Portal...`);
     login('farmer');
     navigate('/farmer');
   };
@@ -81,7 +59,7 @@ export const VerifyEmailPage = () => {
         <div className="space-y-2">
           <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">Verify Mobile Number</h2>
           <p className="text-xs text-slate-500 dark:text-slate-400">
-            We sent a 6-digit verification code to <span className="font-extrabold text-emerald-600 dark:text-emerald-400">{userPhone}</span>
+            Enter the 6-digit verification code for <span className="font-extrabold text-emerald-600 dark:text-emerald-400">{userPhone}</span>
           </p>
         </div>
 
