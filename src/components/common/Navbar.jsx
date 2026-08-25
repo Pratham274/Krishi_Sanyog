@@ -47,11 +47,11 @@ export const Navbar = ({ onOpenSearch }) => {
 
   return (
     <header className="sticky top-0 z-40 w-full glass-nav transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full px-6 sm:px-10 lg:px-16">
         <div className="flex items-center justify-between h-20">
           
           {/* Brand Logo */}
-          <Link to="/" className="flex items-center gap-3 group">
+          <Link to="/" className="flex items-center gap-3 group shrink-0">
             <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-emerald-600 via-green-600 to-teal-500 flex items-center justify-center shadow-lg shadow-emerald-600/30 group-hover:scale-105 transition-transform duration-300">
               <Sprout className="w-6 h-6 text-white" />
             </div>
@@ -67,7 +67,7 @@ export const Navbar = ({ onOpenSearch }) => {
 
           {/* Desktop Navigation Links */}
           {!isPortal && (
-            <nav className="hidden lg:flex items-center gap-8 text-sm font-semibold text-slate-700 dark:text-slate-200">
+            <nav className="hidden lg:flex items-center gap-10 text-sm font-semibold text-slate-700 dark:text-slate-200">
               <a href="#features" className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">{t('nav.features')}</a>
               <a href="#how-it-works" className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">{t('nav.howItWorks')}</a>
               <a href="#benefits" className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">{t('nav.benefits')}</a>
@@ -78,12 +78,12 @@ export const Navbar = ({ onOpenSearch }) => {
           )}
 
           {/* Right Action Tools */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 shrink-0">
             
             {/* PWA Install App Button */}
             <button
               onClick={handleInstallApp}
-              className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300/60 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-xs font-bold transition-all cursor-pointer shadow-xs"
+              className="hidden sm:flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300/60 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-xs font-bold transition-all cursor-pointer shadow-xs"
               title="Install Krishi App on Android, iOS or Desktop"
             >
               <Smartphone className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
@@ -93,7 +93,7 @@ export const Navbar = ({ onOpenSearch }) => {
             {/* Search Trigger */}
             <button
               onClick={onOpenSearch}
-              className="hidden sm:flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 text-xs font-medium border border-slate-200/60 dark:border-slate-700/60 transition-all cursor-pointer"
+              className="hidden sm:flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 text-xs font-medium border border-slate-200/60 dark:border-slate-700/60 transition-all cursor-pointer"
             >
               <Search className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               <span>Search...</span>
@@ -158,7 +158,7 @@ export const Navbar = ({ onOpenSearch }) => {
                 )}
               </div>
             ) : (
-              <div className="hidden sm:flex items-center gap-2">
+              <div className="hidden sm:flex items-center gap-3">
                 <Link
                   to="/login"
                   className="px-4 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 hover:text-emerald-600 transition-colors"
@@ -167,7 +167,7 @@ export const Navbar = ({ onOpenSearch }) => {
                 </Link>
                 <Link
                   to="/farmer"
-                  className="px-4 py-2 rounded-xl emerald-gradient-btn text-xs flex items-center gap-1.5"
+                  className="px-5 py-2.5 rounded-xl emerald-gradient-btn text-xs font-bold flex items-center gap-1.5 shadow-md"
                 >
                   <span>{t('nav.farmerDashboard')}</span>
                   <ChevronRight className="w-3.5 h-3.5" />
@@ -206,7 +206,6 @@ export const Navbar = ({ onOpenSearch }) => {
             </div>
 
             <div className="space-y-4 text-xs">
-              {/* Android Instructions */}
               <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-2">
                 <div className="font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
                   <span className="text-base">🤖</span> Android Devices (Chrome/Edge):
@@ -216,7 +215,6 @@ export const Navbar = ({ onOpenSearch }) => {
                 </p>
               </div>
 
-              {/* iOS Instructions */}
               <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-2">
                 <div className="font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
                   <span className="text-base">🍏</span> iOS Devices (iPhone / iPad Safari):

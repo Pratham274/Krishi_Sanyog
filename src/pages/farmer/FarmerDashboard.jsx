@@ -18,7 +18,7 @@ export const FarmerDashboard = ({ onOpenSearch }) => {
       <div className={`transition-all duration-300 ${collapsed ? 'pl-20' : 'pl-64'}`}>
         <FarmerHeader onOpenSearch={onOpenSearch} pageTitle="Farmer Dashboard Overview" />
 
-        <main className="p-6 sm:p-8 max-w-7xl mx-auto space-y-8">
+        <main className="p-6 sm:p-8 w-full max-w-[1800px] mx-auto space-y-8">
           <WelcomeBanner />
 
           {/* Grid Overview */}

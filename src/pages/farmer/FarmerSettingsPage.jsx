@@ -34,8 +34,8 @@ export const FarmerSettingsPage = ({ onOpenSearch }) => {
       <div className={`transition-all duration-300 ${collapsed ? 'pl-20' : 'pl-64'}`}>
         <FarmerHeader onOpenSearch={onOpenSearch} pageTitle={t('farmer.settingsTitle')} />
 
-        <main className="p-6 sm:p-8 max-w-4xl mx-auto">
-          <div className="glass-card p-8 rounded-3xl border border-slate-200/80 dark:border-slate-800 space-y-6 shadow-xl">
+        <main className="p-6 sm:p-8 w-full max-w-[1600px] mx-auto">
+          <div className="glass-card p-8 sm:p-10 rounded-3xl border border-slate-200/80 dark:border-slate-800 space-y-6 shadow-xl">
             <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">{t('farmer.accountSettings')}</h2>
 
             <form onSubmit={handleSave} className="space-y-6">

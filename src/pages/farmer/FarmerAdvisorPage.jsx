@@ -15,7 +15,7 @@ export const FarmerAdvisorPage = ({ onOpenSearch }) => {
       <div className={`transition-all duration-300 ${collapsed ? 'pl-20' : 'pl-64'}`}>
         <FarmerHeader onOpenSearch={onOpenSearch} pageTitle={t('farmer.advisorTitle')} />
 
-        <main className="p-6 sm:p-8 max-w-7xl mx-auto">
+        <main className="p-6 sm:p-8 w-full max-w-[1800px] mx-auto">
           <AIRecommendationTool />
         </main>
       </div>

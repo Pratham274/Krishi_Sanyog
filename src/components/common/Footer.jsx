@@ -4,9 +4,9 @@ import { Link } from 'react-router-dom';
 
 export const Footer = () => {
   return (
-    <footer className="bg-slate-900 text-slate-300 border-t border-slate-800 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
+    <footer className="bg-slate-950 text-slate-300 border-t border-slate-800/80 transition-colors duration-300">
+      <div className="w-full max-w-[1700px] mx-auto px-6 sm:px-10 lg:px-16 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-12">
           
           {/* Brand Col */}
           <div className="lg:col-span-2 space-y-4">
@@ -16,7 +16,7 @@ export const Footer = () => {
               </div>
               <span className="text-2xl font-extrabold text-white">Krishi Sanyog</span>
             </Link>
-            <p className="text-sm text-slate-400 leading-relaxed pr-6">
+            <p className="text-sm text-slate-400 leading-relaxed max-w-md">
               AI-driven precision agriculture ecosystem enabling Indian farmers with localized soil diagnostics, intelligent fertilizer calculation, crop suitability modeling, and government financial scheme integration.
             </p>
             
@@ -26,7 +26,7 @@ export const Footer = () => {
                 href="https://github.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-xl bg-slate-800 hover:bg-emerald-600 text-slate-300 hover:text-white flex items-center justify-center transition-all shadow-md group"
+                className="w-10 h-10 rounded-xl bg-slate-900 border border-slate-800 hover:bg-emerald-600 text-slate-300 hover:text-white flex items-center justify-center transition-all shadow-md group"
                 title="GitHub Repository"
               >
                 <Github className="w-5 h-5 group-hover:scale-110 transition-transform" />
@@ -35,7 +35,7 @@ export const Footer = () => {
                 href="https://linkedin.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-xl bg-slate-800 hover:bg-emerald-600 text-slate-300 hover:text-white flex items-center justify-center transition-all shadow-md group"
+                className="w-10 h-10 rounded-xl bg-slate-900 border border-slate-800 hover:bg-emerald-600 text-slate-300 hover:text-white flex items-center justify-center transition-all shadow-md group"
                 title="LinkedIn Network"
               >
                 <Linkedin className="w-5 h-5 group-hover:scale-110 transition-transform" />
@@ -45,8 +45,8 @@ export const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-white font-semibold text-sm mb-4 tracking-wider uppercase">Platform</h4>
-            <ul className="space-y-2.5 text-sm">
+            <h4 className="text-white font-extrabold text-xs mb-4 tracking-widest uppercase">Platform</h4>
+            <ul className="space-y-3 text-sm">
               <li><Link to="/farmer" className="hover:text-emerald-400 transition-colors">Farmer Dashboard</Link></li>
               <li><Link to="/farmer/advisor" className="hover:text-emerald-400 transition-colors">AI Soil Advisor</Link></li>
               <li><Link to="/farmer/schemes" className="hover:text-emerald-400 transition-colors">Government Schemes</Link></li>
@@ -57,8 +57,8 @@ export const Footer = () => {
 
           {/* Resources */}
           <div>
-            <h4 className="text-white font-semibold text-sm mb-4 tracking-wider uppercase">Govt Initiatives</h4>
-            <ul className="space-y-2.5 text-sm">
+            <h4 className="text-white font-extrabold text-xs mb-4 tracking-widest uppercase">Govt Initiatives</h4>
+            <ul className="space-y-3 text-sm">
               <li><a href="https://soilhealth.dac.gov.in" target="_blank" rel="noopener noreferrer" className="hover:text-emerald-400 transition-colors">Soil Health Card Scheme</a></li>
               <li><a href="https://pmkisan.gov.in" target="_blank" rel="noopener noreferrer" className="hover:text-emerald-400 transition-colors">PM Kisan Samman Nidhi</a></li>
               <li><a href="https://pmfby.gov.in" target="_blank" rel="noopener noreferrer" className="hover:text-emerald-400 transition-colors">PM Fasal Bima Yojana</a></li>
@@ -69,7 +69,7 @@ export const Footer = () => {
 
           {/* Contact & Support */}
           <div>
-            <h4 className="text-white font-semibold text-sm mb-4 tracking-wider uppercase">Contact Support</h4>
+            <h4 className="text-white font-extrabold text-xs mb-4 tracking-widest uppercase">Contact Support</h4>
             <ul className="space-y-3 text-sm text-slate-400">
               <li className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-emerald-400 shrink-0" />

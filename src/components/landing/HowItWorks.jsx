@@ -31,37 +31,37 @@ export const HowItWorks = () => {
 
   return (
     <section id="how-it-works" className="py-24 relative overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-[1700px] mx-auto px-6 sm:px-10 lg:px-16">
         
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto space-y-4 mb-20">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 text-xs font-bold uppercase tracking-wider">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 text-xs font-extrabold uppercase tracking-wider">
             {t('howItWorks.badge')}
           </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight">
             {t('howItWorks.title')}
           </h2>
-          <p className="text-base text-slate-600 dark:text-slate-400">
+          <p className="text-base sm:text-lg text-slate-600 dark:text-slate-400 font-medium">
             Three simple steps to transform your traditional farming into precision agriculture.
           </p>
         </div>
 
         {/* 3 Step Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-10 relative">
           {steps.map((step, idx) => {
             const Icon = step.icon;
             return (
-              <div key={idx} className="relative glass-card p-8 rounded-3xl border border-slate-200/80 dark:border-slate-800 space-y-6">
+              <div key={idx} className="relative glass-card p-8 sm:p-10 rounded-3xl border border-slate-200/80 dark:border-slate-800 space-y-6 hover:-translate-y-1 transition-all duration-300">
                 <div className="flex items-center justify-between">
-                  <div className={`w-12 h-12 rounded-2xl ${step.color} text-white flex items-center justify-center shadow-lg font-bold text-lg`}>
-                    <Icon className="w-6 h-6" />
+                  <div className={`w-14 h-14 rounded-2xl ${step.color} text-white flex items-center justify-center shadow-lg font-bold text-lg`}>
+                    <Icon className="w-7 h-7" />
                   </div>
-                  <span className="text-4xl font-black text-slate-200 dark:text-slate-800 font-mono">{step.number}</span>
+                  <span className="text-5xl font-black text-slate-200 dark:text-slate-800 font-mono">{step.number}</span>
                 </div>
 
-                <div className="space-y-2">
-                  <h3 className="text-xl font-bold text-slate-900 dark:text-white">{step.title}</h3>
-                  <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">{step.desc}</p>
+                <div className="space-y-3">
+                  <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">{step.title}</h3>
+                  <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed">{step.desc}</p>
                 </div>
               </div>
             );
