@@ -11,7 +11,7 @@ export const mockFarmerUser = {
   location: 'Indore, Madhya Pradesh',
   landSize: 4.5,
   soilType: 'Black Cotton Soil',
-  avatar: 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&q=80&w=200',
+  avatar: 'https://images.unsplash.com/photo-1628155930542-3c7a64e2c833?auto=format&fit=crop&q=80&w=400',
   joinedDate: 'March 2024',
 };
 
@@ -21,7 +21,7 @@ export const mockAdminUser = {
   role: 'admin',
   email: 'ananya.admin@krishisanyog.gov.in',
   department: 'Chief Agricultural Officer & AI Director',
-  avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200',
+  avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400',
 };
 
 export const AuthProvider = ({ children }) => {

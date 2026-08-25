@@ -9,7 +9,7 @@ export const Testimonials = () => {
       crop: 'Soybean & Wheat',
       text: 'Krishi Sanyog saved me over ₹18,000 in fertilizer costs this season alone! The AI recommended replacing excess Urea with SSP and MOP.',
       rating: 5,
-      avatar: 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&q=80&w=200',
+      avatar: 'https://images.unsplash.com/photo-1628155930542-3c7a64e2c833?auto=format&fit=crop&q=80&w=400',
     },
     {
       name: 'Gurpreet Singh',
@@ -17,7 +17,7 @@ export const Testimonials = () => {
       crop: 'Paddy & Wheat',
       text: 'The weather alert notified us 48 hours in advance about heavy rain. We delayed our pesticide spray and avoided total chemical washout.',
       rating: 5,
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200',
+      avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=400',
     },
     {
       name: 'Sunita Deshmukh',
@@ -25,7 +25,7 @@ export const Testimonials = () => {
       crop: 'Grapes & Onion',
       text: 'Applying for PM Fasal Bima Yojana through the portal was seamless. The Hindi language interface made it very easy for my family.',
       rating: 5,
-      avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200',
+      avatar: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&q=80&w=400',
     },
   ];
 
@@ -67,7 +67,7 @@ export const Testimonials = () => {
                 <img
                   src={item.avatar}
                   alt={item.name}
-                  className="w-14 h-14 rounded-2xl object-cover ring-2 ring-emerald-500/50"
+                  className="w-14 h-14 rounded-2xl object-cover ring-2 ring-emerald-500/50 shadow-md"
                 />
                 <div>
                   <h4 className="font-extrabold text-slate-900 dark:text-white text-base">{item.name}</h4>
