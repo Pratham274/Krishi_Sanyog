@@ -21,47 +21,105 @@ export const AIRecommendationTool = () => {
   const [recommendation, setRecommendation] = useState(null);
   const [isCalculating, setIsCalculating] = useState(false);
 
+  // Dynamic Agronomic Crop Requirement Database (kg/acre & optimal pH)
+  const cropTargets = {
+    Wheat: { nameEn: 'Wheat (HD-2967)', nameHi: 'गेहूं (HD-2967)', targetN: 50, targetP: 25, targetK: 20, optPh: 6.8, optMoisture: 40 },
+    Soybean: { nameEn: 'Soybean (JS-335)', nameHi: 'सोयाबीन (JS-335)', targetN: 15, targetP: 30, targetK: 25, optPh: 6.5, optMoisture: 45 },
+    Paddy: { nameEn: 'Paddy / Rice (Pusa 44)', nameHi: 'धान / चावल (पुसा 44)', targetN: 45, targetP: 20, targetK: 30, optPh: 6.2, optMoisture: 60 },
+    Cotton: { nameEn: 'Cotton (Bt Cotton)', nameHi: 'कपास (बीटी कॉटन)', targetN: 60, targetP: 30, targetK: 35, optPh: 7.0, optMoisture: 35 },
+    Maize: { nameEn: 'Maize (Decan 103)', nameHi: 'मक्का (डेक्कन 103)', targetN: 55, targetP: 25, targetK: 25, optPh: 6.6, optMoisture: 40 },
+  };
+
   const handleCalculate = (e) => {
     e.preventDefault();
     setIsCalculating(true);
 
     setTimeout(() => {
-      // Dynamic AI Calculations based on inputs
-      const acres = parseFloat(formData.landSize) || 1;
-      const ureaBags = Math.round(acres * 1.8);
-      const dapBags = Math.round(acres * 1.2);
-      const mopBags = Math.round(acres * 0.8);
+      // 1. Parse Input Parameters
+      const acres = Math.max(0.1, parseFloat(formData.landSize) || 1);
+      const inputN = Math.max(0, parseFloat(formData.nitrogen) || 0); // kg/ha
+      const inputP = Math.max(0, parseFloat(formData.phosphorus) || 0);
+      const inputK = Math.max(0, parseFloat(formData.potassium) || 0);
+      const ph = Math.max(3, Math.min(11, parseFloat(formData.ph) || 6.8));
+      const moisture = Math.max(5, Math.min(95, parseFloat(formData.moisture) || 40));
+      const selectedCropKey = formData.crop || 'Wheat';
+      const cropTarget = cropTargets[selectedCropKey] || cropTargets.Wheat;
+
+      // 2. Convert kg/ha to kg/acre (1 hectare = 2.471 acres)
+      const soilN_acre = inputN / 2.471;
+      const soilP_acre = inputP / 2.471;
+      const soilK_acre = inputK / 2.471;
+
+      // 3. Calculate Deficiencies per acre
+      const deficitP_acre = Math.max(0, cropTarget.targetP - soilP_acre);
+      const dapKg_acre = deficitP_acre / 0.46; // DAP is 46% P2O5
+      const nSuppliedByDap_acre = dapKg_acre * 0.18; // DAP is 18% N
+
+      const deficitN_acre = Math.max(0, cropTarget.targetN - soilN_acre - nSuppliedByDap_acre);
+      const ureaKg_acre = deficitN_acre / 0.46; // Urea is 46% N
+
+      const deficitK_acre = Math.max(0, cropTarget.targetK - soilK_acre);
+      const mopKg_acre = deficitK_acre / 0.60; // MOP is 60% K2O
+
+      // 4. Compute Total Bags for Landholding
+      const totalUreaBags = Math.max(deficitN_acre > 2 ? 1 : 0, Math.round((ureaKg_acre * acres) / 45));
+      const totalDapBags = Math.max(deficitP_acre > 2 ? 1 : 0, Math.round((dapKg_acre * acres) / 50));
+      const totalMopBags = Math.max(deficitK_acre > 2 ? 1 : 0, Math.round((mopKg_acre * acres) / 50));
+
+      // 5. Dynamic Suitability Score (0 - 100%)
+      const phDiff = Math.abs(ph - cropTarget.optPh);
+      const phScore = Math.max(50, 100 - phDiff * 20);
+      const moistureDiff = Math.abs(moisture - cropTarget.optMoisture);
+      const moistureScore = Math.max(50, 100 - moistureDiff * 1.5);
+      const suitabilityScore = Math.round(Math.min(98, Math.max(68, (phScore * 0.6 + moistureScore * 0.4))));
+
+      // 6. Dynamic Alternative Crop Suitability Matches
+      const cropKeys = Object.keys(cropTargets);
+      const recommendedCrops = cropKeys.map((key) => {
+        const item = cropTargets[key];
+        const itemPhDiff = Math.abs(ph - item.optPh);
+        const itemMatchScore = Math.round(Math.min(98, Math.max(65, 100 - itemPhDiff * 15 - Math.abs(inputN - item.targetN * 2) * 0.15)));
+        
+        let reasonEn = `Optimal ${item.optPh} pH & nutrient balance`;
+        let reasonHi = `अनुकूल ${item.optPh} pH और पोषक संतुलन`;
+        
+        if (inputN < 90 && key === 'Soybean') {
+          reasonEn = 'Low Nitrogen requirement (Fixes N naturally)';
+          reasonHi = 'कम नाइट्रोजन आवश्यकता (प्राकृतिक N निर्धारण)';
+        } else if (ph > 7.2 && key === 'Cotton') {
+          reasonEn = 'Highly tolerant to alkaline soil & high K';
+          reasonHi = 'क्षारीय मिट्टी और उच्च K के लिए अत्यधिक सहनशील';
+        } else if (inputP > 35 && key === 'Wheat') {
+          reasonEn = 'Ideal Phosphorus & Nitrogen absorption';
+          reasonHi = 'उत्कृष्ट फास्फोरस और नाइट्रोजन अवशोषण';
+        }
+
+        return {
+          name: isHindi ? item.nameHi : item.nameEn,
+          match: `${itemMatchScore}%`,
+          reason: isHindi ? reasonHi : reasonEn,
+          score: itemMatchScore,
+        };
+      }).sort((a, b) => b.score - a.score).slice(0, 3);
+
+      // 7. Dynamic Agronomist Advisory Text
+      const cropNameDisplay = isHindi ? cropTarget.nameHi : cropTarget.nameEn;
+      const advisoryText = isHindi
+        ? `मिट्टी परीक्षण (N: ${inputN}, P: ${inputP}, K: ${inputK}, pH: ${ph}) के आधार पर, ${acres} एकड़ ${cropNameDisplay} के लिए: खेत की तैयारी के समय ${totalDapBags} बोरी डीएपी (DAP) और ${totalMopBags} बोरी एमओपी (MOP) का प्रयोग करें। नीम लेपित यूरिया की ${totalUreaBags} बोरियों को 2 विभाजित खुराकों में दें: पहली 21 दिन पर और दूसरी 45 दिन पर।`
+        : `Based on your soil parameters (N: ${inputN}, P: ${inputP}, K: ${inputK}, pH: ${ph}) for ${acres} acres of ${cropNameDisplay}: Apply ${totalDapBags} bags DAP and ${totalMopBags} bags MOP during basal land preparation. Apply ${totalUreaBags} bags of Neem Coated Urea in 2 split doses: 1st at crown root initiation (21 days) and 2nd at jointing stage.`;
 
       setRecommendation({
-        ureaBags,
-        dapBags,
-        mopBags,
-        suitabilityScore: 94,
-        recommendedCrops: [
-          {
-            name: isHindi ? 'गेहूं (HD-2967)' : 'Wheat (HD-2967)',
-            match: '96%',
-            reason: isHindi ? 'उत्कृष्ट N-P-K और 6.8 pH स्तर' : 'Ideal N-P-K & 6.8 pH level',
-          },
-          {
-            name: isHindi ? 'चना (Chickpea)' : 'Chickpea / Gram (चना)',
-            match: '91%',
-            reason: isHindi ? 'कम नाइट्रोजन मांग और अच्छी जल निकासी' : 'Low Nitrogen demand & good drainage',
-          },
-          {
-            name: isHindi ? 'सरसों (Mustard)' : 'Mustard (सरसों)',
-            match: '88%',
-            reason: isHindi ? 'अनुकूल पोटेशियम और नमी' : 'Optimal Potassium & moisture',
-          },
-        ],
-        advisory: isHindi
-          ? `${acres} एकड़ ${formData.crop} के लिए, खेत की तैयारी के समय बुआई के साथ ${dapBags} बोरी डीएपी (DAP) का प्रयोग करें। नीम लेपित यूरिया की ${ureaBags} बोरियां 2 अलग-अलग खुराकों में दें: पहली 21 दिन पर और दूसरी 45 दिन पर।`
-          : `For ${acres} acres of ${formData.crop}, apply ${dapBags} bags DAP at sowing time during basal land preparation. Apply ${ureaBags} bags of Neem Coated Urea in 2 split doses: 1st at crown root initiation (21 days) and 2nd at jointing stage.`,
+        ureaBags: totalUreaBags,
+        dapBags: totalDapBags,
+        mopBags: totalMopBags,
+        suitabilityScore,
+        recommendedCrops,
+        advisory: advisoryText,
       });
 
       setIsCalculating(false);
-      toast.success(isHindi ? 'AI सिफारिश सफलतापूर्वक जनरेट हो गई!' : 'AI Recommendation generated successfully!');
-    }, 600);
+      toast.success(isHindi ? 'नवीनतम मिट्टी मापदंडों के आधार पर AI सिफारिश जनरेट की गई!' : 'AI Recommendation generated based on updated soil parameters!');
+    }, 400);
   };
 
   return (
@@ -216,7 +274,7 @@ export const AIRecommendationTool = () => {
 
                 <button
                   onClick={() => toast.success(isHindi ? 'सलाहकार रिपोर्ट पीडीफ़ डाउनलोड हो गई!' : 'Advisory PDF Report downloaded!')}
-                  className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 text-slate-700 dark:text-slate-200 text-xs font-bold flex items-center gap-1.5 transition-colors"
+                  className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 text-slate-700 dark:text-slate-200 text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
                 >
                   <Download className="w-4 h-4 text-emerald-600" /> PDF
                 </button>
@@ -249,7 +307,7 @@ export const AIRecommendationTool = () => {
                   <FileText className="w-4 h-4 text-emerald-600" />
                   <span>{t('farmer.agronomistSchedule')}</span>
                 </div>
-                <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed pt-1">
+                <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed pt-1 font-medium">
                   {recommendation.advisory}
                 </p>
               </div>
@@ -264,7 +322,7 @@ export const AIRecommendationTool = () => {
                         <span className="font-bold text-slate-800 dark:text-slate-100">{c.name}</span>
                         <span className="text-[11px] text-slate-500 block">{c.reason}</span>
                       </div>
-                      <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-extrabold">{c.match} Match</span>
+                      <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-extrabold">{c.match} Match</span>
                     </div>
                   ))}
                 </div>
