@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
     const savedRole = localStorage.getItem('krishi_auth_role');
     if (savedRole === 'admin') return mockAdminUser;
     if (savedRole === 'farmer') return mockFarmerUser;
-    return mockFarmerUser; // Default logged in as farmer for showcase
+    return null; // Require login/registration by default for new visitors
   });
 
   const login = (role = 'farmer') => {

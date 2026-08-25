@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 
 import { ThemeProvider } from './context/ThemeContext';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import './i18n';
 
 // Common Components
@@ -38,6 +38,21 @@ import AdminSettingsPage from './pages/admin/AdminSettingsPage';
 import NotFoundPage from './pages/errors/NotFoundPage';
 import ServerErrorPage from './pages/errors/ServerErrorPage';
 
+// Protected Route Component
+const ProtectedRoute = ({ children, allowedRole }) => {
+  const { user } = useAuth();
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (allowedRole && user.role !== allowedRole) {
+    return <Navigate to={user.role === 'admin' ? '/admin' : '/farmer'} replace />;
+  }
+
+  return children;
+};
+
 const AppLayout = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const location = useLocation();
@@ -62,19 +77,19 @@ const AppLayout = () => {
           <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/verify-email" element={<VerifyEmailPage />} />
 
-          {/* Farmer Portal */}
-          <Route path="/farmer" element={<FarmerDashboard onOpenSearch={() => setIsSearchOpen(true)} />} />
-          <Route path="/farmer/advisor" element={<FarmerAdvisorPage onOpenSearch={() => setIsSearchOpen(true)} />} />
-          <Route path="/farmer/schemes" element={<FarmerSchemesPage onOpenSearch={() => setIsSearchOpen(true)} />} />
-          <Route path="/farmer/notices" element={<FarmerNoticesPage onOpenSearch={() => setIsSearchOpen(true)} />} />
-          <Route path="/farmer/settings" element={<FarmerSettingsPage onOpenSearch={() => setIsSearchOpen(true)} />} />
+          {/* Farmer Portal (Protected) */}
+          <Route path="/farmer" element={<ProtectedRoute allowedRole="farmer"><FarmerDashboard onOpenSearch={() => setIsSearchOpen(true)} /></ProtectedRoute>} />
+          <Route path="/farmer/advisor" element={<ProtectedRoute allowedRole="farmer"><FarmerAdvisorPage onOpenSearch={() => setIsSearchOpen(true)} /></ProtectedRoute>} />
+          <Route path="/farmer/schemes" element={<ProtectedRoute allowedRole="farmer"><FarmerSchemesPage onOpenSearch={() => setIsSearchOpen(true)} /></ProtectedRoute>} />
+          <Route path="/farmer/notices" element={<ProtectedRoute allowedRole="farmer"><FarmerNoticesPage onOpenSearch={() => setIsSearchOpen(true)} /></ProtectedRoute>} />
+          <Route path="/farmer/settings" element={<ProtectedRoute allowedRole="farmer"><FarmerSettingsPage onOpenSearch={() => setIsSearchOpen(true)} /></ProtectedRoute>} />
 
-          {/* Admin Portal */}
-          <Route path="/admin" element={<AdminDashboard onOpenSearch={() => setIsSearchOpen(true)} />} />
-          <Route path="/admin/farmers" element={<AdminFarmersPage onOpenSearch={() => setIsSearchOpen(true)} />} />
-          <Route path="/admin/database" element={<AdminDatabasePage onOpenSearch={() => setIsSearchOpen(true)} />} />
-          <Route path="/admin/notices" element={<AdminNoticesPage onOpenSearch={() => setIsSearchOpen(true)} />} />
-          <Route path="/admin/settings" element={<AdminSettingsPage onOpenSearch={() => setIsSearchOpen(true)} />} />
+          {/* Admin Portal (Protected) */}
+          <Route path="/admin" element={<ProtectedRoute allowedRole="admin"><AdminDashboard onOpenSearch={() => setIsSearchOpen(true)} /></ProtectedRoute>} />
+          <Route path="/admin/farmers" element={<ProtectedRoute allowedRole="admin"><AdminFarmersPage onOpenSearch={() => setIsSearchOpen(true)} /></ProtectedRoute>} />
+          <Route path="/admin/database" element={<ProtectedRoute allowedRole="admin"><AdminDatabasePage onOpenSearch={() => setIsSearchOpen(true)} /></ProtectedRoute>} />
+          <Route path="/admin/notices" element={<ProtectedRoute allowedRole="admin"><AdminNoticesPage onOpenSearch={() => setIsSearchOpen(true)} /></ProtectedRoute>} />
+          <Route path="/admin/settings" element={<ProtectedRoute allowedRole="admin"><AdminSettingsPage onOpenSearch={() => setIsSearchOpen(true)} /></ProtectedRoute>} />
 
           {/* Errors */}
           <Route path="/500" element={<ServerErrorPage />} />
